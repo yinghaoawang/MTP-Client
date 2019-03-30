@@ -1,22 +1,20 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class Client {
     public static Socket clientSocket;
-    public static PrintWriter out;
-    public static BufferedReader in;
-
+    public static DataOutputStream out;
+    public static DataInputStream in;
+    public static String user = "Client";
     public static void startConnection(String ip, int port) throws Exception {
          clientSocket = new Socket(ip, port);
-         out = new PrintWriter(clientSocket.getOutputStream(), true);
-         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+         out = new DataOutputStream(clientSocket.getOutputStream());
+         in = new DataInputStream(clientSocket.getInputStream());
     }
 
-    public static int sendMessage(String msg) {
-        out.println(msg);
+    public static int sendMessage(String msg) throws IOException {
+        out.writeUTF(user + ": " + msg);
         return 1;
     }
 
@@ -24,7 +22,11 @@ public class Client {
         startConnection("localhost", 1234);
         Scanner scanner = new Scanner(System.in);
         while(true) {
-            sendMessage(scanner.nextLine());
+            try {
+                sendMessage(scanner.nextLine());
+            } catch (Exception e) {
+                System.out.println("Couldn't send message.");
+            }
         }
 
     }
