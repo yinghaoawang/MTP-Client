@@ -14,20 +14,49 @@ public class Client {
     }
 
     public static int sendMessage(String msg) throws IOException {
-        out.writeUTF(user + ": " + msg);
+        out.writeUTF(msg);
         return 1;
     }
 
     public static void main(String args[]) throws Exception {
         startConnection("localhost", 1234);
-        Scanner scanner = new Scanner(System.in);
-        while(true) {
-            try {
-                sendMessage(scanner.nextLine());
-            } catch (Exception e) {
-                System.out.println("Couldn't send message.");
+        System.out.println("Connected to " + clientSocket.getInetAddress());
+
+        Thread writeThread = new Thread() {
+            @Override
+            public void run() {
+                Scanner scanner = new Scanner(System.in);
+                while(true) {
+                    try {
+                        String msg = scanner.nextLine();
+                        sendMessage(user + ": " + msg);
+                        System.out.println(user + ": " + msg);
+                    } catch (Exception e) {
+                        System.out.println("Couldn't send message.");
+                    }
+                }
             }
-        }
+        };
+
+        Thread readThread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        String inputLine = in.readUTF();
+                        if (in != null) {
+                            System.out.println("Server: " + inputLine);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        readThread.start();
+        writeThread.start();
+
 
     }
 }
