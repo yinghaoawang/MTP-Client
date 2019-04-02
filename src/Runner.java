@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Runner {
     public static ChatBoxPanel chatBox;
@@ -23,21 +26,23 @@ public class Runner {
 
                 String inetAddress = "localhost";
                 int port = 1234;
-                try {
-                    chatBox.addLine("Connecting to /" + inetAddress + ":" + port);
-                    client.startConnection(inetAddress, port);
-                    chatBox.addLine("Connected to " + client.clientSocket.getInetAddress());
-                    //break;
-                } catch (Exception ex) {
-                    chatBox.addLine(ex.getMessage());
-                }
 
-                Thread connectThread = new Thread() {
+                ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+
+                chatBox.addLine("Connecting to /" + inetAddress + ":" + port);
+                exec.scheduleAtFixedRate(new Runnable() {
                     @Override
                     public void run() {
-
+                        try {
+                            chatBox.addLine("Connecting...");
+                            client.startConnection(inetAddress, port);
+                            chatBox.addLine("Connected to " + client.clientSocket.getInetAddress());
+                            exec.shutdown();
+                        } catch (Exception ex) {
+                            System.out.println(ex.getMessage());
+                        }
                     }
-                };
+                }, 0, 5, TimeUnit.SECONDS);
 
             }
         });
