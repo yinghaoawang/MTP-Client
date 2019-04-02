@@ -11,7 +11,7 @@ public class Client {
     public DataOutputStream out;
     public DataInputStream in;
     public String user = "Client";
-    public void startConnection(String ip, int port) throws Exception {
+    public void startConnection(String ip, int port) throws IOException {
         clientSocket = new Socket();
         clientSocket.connect(new InetSocketAddress(ip, port), 5000);
         if (clientSocket.isConnected()) {
@@ -20,50 +20,10 @@ public class Client {
         }
     }
 
-    public int sendMessage(String msg) throws IOException {
+    public void sendMessage(String msg) throws IOException {
         out.writeUTF(msg);
-        return 1;
     }
 
     public Client() {
-
-
-        /*
-        Thread writeThread = new Thread() {
-            @Override
-            public void run() {
-                Scanner scanner = new Scanner(System.in);
-                while(true) {
-                    try {
-                        String msg = scanner.nextLine();
-                        sendMessage(user + ": " + msg);
-                        System.out.println(user + ": " + msg);
-                    } catch (Exception e) {
-                        System.out.println("Couldn't send message.");
-                    }
-                }
-            }
-        };
-
-        Thread readThread = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        String inputLine = in.readUTF();
-                        if (in != null) {
-                            System.out.println("Server: " + inputLine);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-
-        readThread.start();
-        writeThread.start();
-        */
-
     }
 }

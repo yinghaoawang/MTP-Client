@@ -34,12 +34,35 @@ public class Runner {
                     @Override
                     public void run() {
                         try {
-                            chatBox.addLine("Connecting...");
+
                             client.startConnection(inetAddress, port);
                             chatBox.addLine("Connected to " + client.clientSocket.getInetAddress());
+
                             exec.shutdown();
+
+                            Thread readThread = new Thread() {
+                                @Override
+                                public void run() {
+                                    while (true) {
+                                        try {
+                                            String inputLine = client.in.readUTF();
+                                            if (inputLine != null) {
+                                                System.out.println(inputLine);
+                                                chatBox.addLine(inputLine);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                }
+                            };
+
+                            readThread.start();
+
                         } catch (Exception ex) {
                             System.out.println(ex.getMessage());
+                            chatBox.addLine("Connecting...");
                         }
                     }
                 }, 0, 5, TimeUnit.SECONDS);
@@ -50,6 +73,56 @@ public class Runner {
             @Override
             public void actionPerformed(ActionEvent e) {
                 sceneTwo(clientButton, serverButton);
+
+                Server server = new Server();
+                int port = 1234;
+
+                try {
+                    server.createServer(port);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                //ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+
+                chatBox.addLine("Awaiting connection on port " + port);
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            server.awaitConnection();
+
+
+                            if (server.clientSocket != null) {
+                                chatBox.addLine(server.clientSocket.getInetAddress() + " has connected");
+
+                                Thread readThread = new Thread() {
+                                    @Override
+                                    public void run() {
+                                        while (true) {
+                                            try {
+                                                String inputLine = server.in.readUTF();
+                                                if (inputLine != null) {
+                                                    System.out.println(inputLine);
+                                                    chatBox.addLine(inputLine);
+                                                }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+
+                                        }
+                                    }
+                                };
+
+                                readThread.start();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                thread.start();
             }
         });
 
