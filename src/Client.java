@@ -1,27 +1,34 @@
 import java.io.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Scanner;
+import java.util.Timer;
 
 public class Client {
-    public static Socket clientSocket;
-    public static DataOutputStream out;
-    public static DataInputStream in;
-    public static String user = "Client";
-    public static void startConnection(String ip, int port) throws Exception {
-         clientSocket = new Socket(ip, port);
-         out = new DataOutputStream(clientSocket.getOutputStream());
-         in = new DataInputStream(clientSocket.getInputStream());
+    public Socket clientSocket;
+    public DataOutputStream out;
+    public DataInputStream in;
+    public String user = "Client";
+    public void startConnection(String ip, int port) throws Exception {
+        clientSocket = new Socket();
+        clientSocket.connect(new InetSocketAddress(ip, port), 5000);
+        if (clientSocket.isConnected()) {
+            out = new DataOutputStream(clientSocket.getOutputStream());
+            in = new DataInputStream(clientSocket.getInputStream());
+        }
     }
 
-    public static int sendMessage(String msg) throws IOException {
+    public int sendMessage(String msg) throws IOException {
         out.writeUTF(msg);
         return 1;
     }
 
-    public static void main(String args[]) throws Exception {
-        startConnection("localhost", 1234);
-        System.out.println("Connected to " + clientSocket.getInetAddress());
+    public Client() {
 
+
+        /*
         Thread writeThread = new Thread() {
             @Override
             public void run() {
@@ -56,7 +63,7 @@ public class Client {
 
         readThread.start();
         writeThread.start();
-
+        */
 
     }
 }

@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -5,6 +7,12 @@ import java.util.Scanner;
 
 public class Server {
     public static void main(String args[]) throws Exception {
+        JFrame frame = new JFrame();
+        frame.setSize(1000, 800);
+        ChatBoxPanel chatBox = new ChatBoxPanel();
+        frame.add(chatBox);
+        frame.setVisible(true);
+
         // Creates a server socket
         ServerSocket serverSocket = new ServerSocket(1234);
 
@@ -26,6 +34,7 @@ public class Server {
                         String inputLine = in.readUTF();
                         if (inputLine != null) {
                             System.out.println(inputLine);
+                            chatBox.addLine(inputLine);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -44,7 +53,8 @@ public class Server {
                         String inputLine = scanner.nextLine();
                         if (inputLine != null) {
                             out.writeUTF("Server: " + inputLine);
-                            System.out.println(inputLine);
+                            System.out.println("Server: " + inputLine);
+                            chatBox.addLine("Server: " + inputLine);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
