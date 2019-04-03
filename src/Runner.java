@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -9,11 +11,14 @@ import java.util.concurrent.TimeUnit;
 public class Runner {
     public static ChatBoxPanel chatBox;
     public static JFrame frame;
+    public static Client client;
+    public static Server server;
     public static void main(String[] args) {
         frame = new JFrame();
         frame.setSize(1000, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new FlowLayout());
+        frame.setTitle("MTP Client");
 
         JButton clientButton = new JButton("Client");
         JButton serverButton = new JButton("Server");
@@ -22,7 +27,7 @@ public class Runner {
             @Override
             public void actionPerformed(ActionEvent e) {
                 sceneTwo(clientButton, serverButton);
-                Client client = new Client();
+                client = new Client();
 
                 String inetAddress = "localhost";
                 int port = 1234;
@@ -58,6 +63,28 @@ public class Runner {
                                 }
                             };
 
+                            chatBox.getOutField().addKeyListener(new KeyAdapter() {
+                                @Override
+                                public void keyPressed(KeyEvent e) {
+                                    super.keyPressed(e);
+                                    e.consume();
+                                    if (e.getKeyChar() == '\n') {
+                                        try {
+                                            String msg = chatBox.getOutField().getText();
+                                            if (msg.trim() == "") return;
+                                            msg = "Client: " + msg;
+                                            client.out.writeUTF(msg);
+                                            chatBox.addLine(msg);
+                                            chatBox.getOutField().setText("");
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
+                                    }
+                                }
+                            });
+
+                            frame.setTitle("Client");
+
                             readThread.start();
 
                         } catch (Exception ex) {
@@ -82,8 +109,6 @@ public class Runner {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-
-                //ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
 
                 chatBox.addLine("Awaiting connection on port " + port);
                 Thread thread = new Thread() {
@@ -115,6 +140,28 @@ public class Runner {
                                     }
                                 };
 
+                                chatBox.getOutField().addKeyListener(new KeyAdapter() {
+                                    @Override
+                                    public void keyPressed(KeyEvent e) {
+                                        super.keyPressed(e);
+                                        e.consume();
+                                        if (e.getKeyChar() == '\n') {
+                                            try {
+                                                String msg = chatBox.getOutField().getText();
+                                                if (msg.trim() == "") return;
+                                                msg = "Server: " + msg;
+                                                server.out.writeUTF(msg);
+                                                chatBox.addLine(msg);
+                                                chatBox.getOutField().setText("");
+                                            } catch (Exception ex) {
+                                                ex.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                });
+
+                                frame.setTitle("Server");
+
                                 readThread.start();
                             }
                         } catch (Exception e) {
@@ -122,6 +169,7 @@ public class Runner {
                         }
                     }
                 };
+
                 thread.start();
             }
         });

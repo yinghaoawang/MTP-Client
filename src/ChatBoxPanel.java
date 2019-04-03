@@ -40,6 +40,10 @@ public class ChatBoxPanel extends JPanel {
         add(outField, c);
     }
 
+    public JTextArea getOutField() {
+        return outField;
+    }
+
     public void addLine(String msg) {
         messageField.setText(messageField.getText() + msg + "\n");
 
