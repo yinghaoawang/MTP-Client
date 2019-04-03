@@ -7,33 +7,41 @@ public class ChatBoxPanel extends JPanel {
 
     private JTextArea messageField;
     private JTextArea outField;
+    private JScrollPane scrollPane;
+
     public ChatBoxPanel() {
+        Border textBoxBorder = new LineBorder(Color.black, 1);
+
+        setPreferredSize(new Dimension(550, 350));
+        setSize(600, 400);
+        setBorder(textBoxBorder);
+
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        Border textBoxBorder = new LineBorder(Color.black, 1);
         messageField = new JTextArea();
         messageField.setRows(10);
         messageField.setColumns(6);
-        messageField.setPreferredSize(new Dimension(500, 300));
+        messageField.setSize(new Dimension(500, 300));
         messageField.setBorder(textBoxBorder);
         messageField.setEditable(false);
+        messageField.setLineWrap(true);
+
+        scrollPane = new JScrollPane(messageField);
+        scrollPane.setPreferredSize(messageField.getSize());
 
         outField = new JTextArea();
         outField.setRows(2);
         outField.setColumns(6);
         outField.setPreferredSize(new Dimension(500, 20));
         outField.setBorder(textBoxBorder);
-
-        setPreferredSize(new Dimension(550, 350));
-        setSize(600, 400);
-        setBorder(textBoxBorder);
+        outField.setLineWrap(true);
 
         c.insets = new Insets(10, 10, 10, 10);
 
         c.gridx = 1;
         c.gridy = 0;
-        add(messageField, c);
+        add(scrollPane, c);
 
         c.gridx = 1;
         c.gridy = 1;

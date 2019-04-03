@@ -29,7 +29,7 @@ public class Runner {
                 sceneTwo(clientButton, serverButton);
                 client = new Client();
 
-                String inetAddress = "localhost";
+                String inetAddress = "25.14.226.90";
                 int port = 1234;
 
                 ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -67,8 +67,9 @@ public class Runner {
                                 @Override
                                 public void keyPressed(KeyEvent e) {
                                     super.keyPressed(e);
-                                    e.consume();
+
                                     if (e.getKeyChar() == '\n') {
+                                        e.consume();
                                         try {
                                             String msg = chatBox.getOutField().getText();
                                             if (msg.trim() == "") return;
@@ -144,8 +145,9 @@ public class Runner {
                                     @Override
                                     public void keyPressed(KeyEvent e) {
                                         super.keyPressed(e);
-                                        e.consume();
+
                                         if (e.getKeyChar() == '\n') {
+                                            e.consume();
                                             try {
                                                 String msg = chatBox.getOutField().getText();
                                                 if (msg.trim() == "") return;
