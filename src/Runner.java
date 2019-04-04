@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +17,7 @@ public class Runner {
     public static JFrame frame;
     public static Client client;
     public static Server server;
+
     public static void main(String[] args) {
         frame = new JFrame();
         frame.setSize(1000, 800);
@@ -58,19 +60,19 @@ public class Runner {
                 int port = 1234;
 
                 // Creates the server at the specified port then looks for a connection
+                // creates server
+                try {
+                    server.createServer(port);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 serverWaitForClient(port);
             }
         });
     }
 
-    // Creates the server at port, waits for a client connection, if found then functionality added to the chatbox
+    // Server waits for a client connection, if found then functionality added to the chatbox
     public static void serverWaitForClient(int port) {
-        // creates server
-        try {
-            server.createServer(port);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
         // Waits for a connection from a client by using a thread since await connection is blocking
         chatBox.addLine("Awaiting connection on port " + port);
         Thread thread = new Thread() {
@@ -97,7 +99,13 @@ public class Runner {
                     Thread readThread = new Thread() {
                         @Override
                         public void run() {
-                            readThreadFunction(server.in);
+                            try {
+                                readThreadFunction(server.in);
+                            } catch (InterruptedException ex) {
+                                chatBox.addLine(server.clientSocket.getInetAddress() + " has disconnected.");
+                                chatBox.getOutField().removeKeyListener(chatBox.getOutField().getKeyListeners()[0]);
+                                serverWaitForClient(port);
+                            }
                         }
                     };
                     readThread.start();
@@ -139,7 +147,13 @@ public class Runner {
                     Thread readThread = new Thread() {
                         @Override
                         public void run() {
-                            readThreadFunction(client.in);
+                            try {
+                                readThreadFunction(client.in);
+                            } catch (InterruptedException ex) {
+                                chatBox.addLine(client.clientSocket.getInetAddress() + " has disconnected.");
+                                chatBox.getOutField().removeKeyListener(chatBox.getOutField().getKeyListeners()[0]);
+                                clientSearchForServer(inetAddress, port, seconds);
+                            }
                         }
                     };
 
@@ -154,16 +168,17 @@ public class Runner {
     }
 
     // The function that constantly checks any input has been sent to the socket (should be in a thread)
-    public static void readThreadFunction(DataInputStream in) {
+    public static void readThreadFunction(DataInputStream in) throws InterruptedException {
         while (true) {
+
             try {
                 String inputLine = in.readUTF();
                 if (inputLine != null) {
                     System.out.println(inputLine);
                     chatBox.addLine(inputLine);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new InterruptedException();
             }
 
         }
