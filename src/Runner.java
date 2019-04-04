@@ -14,8 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class Runner {
     public static ChatBoxPanel chatBox;
     public static JFrame frame;
-    public static JPanel inputPanel;
-    public static JPanel selectionPanel;
+    public static JPanel[] panels;
     public static Client client;
     public static Server server;
 
@@ -27,29 +26,40 @@ public class Runner {
         GridBagConstraints c = new GridBagConstraints();
         frame.setTitle("MTP Client");
 
-        inputPanel = new JPanel();
-        inputPanel.setLayout(new FlowLayout());
-
-        selectionPanel = new JPanel();
-        selectionPanel.setLayout(new FlowLayout());
-
-        JButton clientButton = new JButton("Client");
+        JPanel addressPanel = new JPanel();
+        addressPanel.setLayout(new FlowLayout());
         JTextField clientIPText = new JTextField("127.0.0.1");
         clientIPText.setColumns(10);
+        addressPanel.add(new JLabel("IP: "));
+        addressPanel.add(clientIPText);
 
-        inputPanel.add(new JLabel("IP: "));
-        inputPanel.add(clientIPText);
+        JPanel portPanel = new JPanel();
+        portPanel.setLayout(new FlowLayout());
+        JTextField portText = new JTextField("1234");
+        portText.setColumns(10);
+        portPanel.add(new JLabel("Port: "));
+        portPanel.add(portText);
 
+        JPanel selectionPanel = new JPanel();
+        selectionPanel.setLayout(new FlowLayout());
+        JButton clientButton = new JButton("Client");
         JButton serverButton = new JButton("Server");
+        clientButton.setSize(100, 75);
+        serverButton.setSize(100, 75);
         selectionPanel.add(clientButton);
         selectionPanel.add(serverButton);
 
-        clientButton.setSize(100, 75);
-        serverButton.setSize(100, 75);
+        panels = new JPanel[] {
+            addressPanel, portPanel, selectionPanel
+        };
 
-        frame.add(inputPanel, c);
-        c.gridy = 1;
-        frame.add(selectionPanel, c);
+        for (int i = 0; i < panels.length; ++i) {
+            c.anchor = GridBagConstraints.EAST;
+            c.gridx = 0;
+            c.gridy = i;
+            frame.add(panels[i], c);
+        }
+
         frame.setVisible(true);
 
         clientButton.addActionListener(new ActionListener() {
@@ -60,7 +70,7 @@ public class Runner {
 
                 client = new Client();
                 String inetAddress = clientIPText.getText();
-                int port = 1234;
+                int port = Integer.parseInt(portText.getText());
 
                 // Client tries to connect to the specified address and port
                 clientSearchForServer(inetAddress, port, 3);
@@ -74,7 +84,7 @@ public class Runner {
                 frame.setTitle("Server");
 
                 server = new Server();
-                int port = 1234;
+                int port = Integer.parseInt(portText.getText());
 
                 // Creates the server at the specified port then looks for a connection
                 try {
@@ -222,8 +232,9 @@ public class Runner {
     // Transition from two button scene to the chatbox scene after selection (only gui elements)
     public static void sceneTwo() {
         frame.setLayout(null);
-        frame.remove(inputPanel);
-        frame.remove(selectionPanel);
+        for (JPanel panel : panels) {
+            frame.remove(panel);
+        }
         chatBox = new ChatBoxPanel();
         frame.add(chatBox);
         frame.repaint();
