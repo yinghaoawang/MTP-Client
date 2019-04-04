@@ -6,6 +6,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -121,6 +122,22 @@ public class Runner {
                         }
                     });
 
+                    chatBox.getAttachmentButton().addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            JFileChooser fc = new JFileChooser("./");
+                            int fcReturn = fc.showOpenDialog(frame);
+                            if (fcReturn == JFileChooser.APPROVE_OPTION) {
+                                try {
+                                    File file = fc.getSelectedFile();
+                                    sendMessage("Server", file.getName(), server.out);
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+
                     // adds a new thread that looks for input from the socket to display on the chatbox
                     Thread readThread = new Thread() {
                         @Override
@@ -219,14 +236,18 @@ public class Runner {
             try {
                 String msg = chatBox.getOutField().getText();
                 if (msg.trim() == "") return;
-                msg = username + ": " + msg;
-                out.writeUTF(msg);
-                chatBox.addLine(msg);
-                chatBox.getOutField().setText("");
+                sendMessage(username, msg, out);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public static void sendMessage(String username, String msg, DataOutputStream out) throws IOException {
+        msg = username + ": " + msg;
+        out.writeUTF(msg);
+        chatBox.addLine(msg);
+        chatBox.getOutField().setText("");
     }
 
     // Transition from two button scene to the chatbox scene after selection (only gui elements)
