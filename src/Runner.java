@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,34 +14,52 @@ import java.util.concurrent.TimeUnit;
 public class Runner {
     public static ChatBoxPanel chatBox;
     public static JFrame frame;
+    public static JPanel inputPanel;
+    public static JPanel selectionPanel;
     public static Client client;
     public static Server server;
 
     public static void main(String[] args) {
         frame = new JFrame();
-        frame.setSize(1000, 800);
+        frame.setSize(610, 435);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new FlowLayout());
+        frame.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
         frame.setTitle("MTP Client");
 
+        inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout());
+
+        selectionPanel = new JPanel();
+        selectionPanel.setLayout(new FlowLayout());
+
         JButton clientButton = new JButton("Client");
+        JTextField clientIPText = new JTextField("127.0.0.1");
+        clientIPText.setColumns(10);
+
+        inputPanel.add(new JLabel("IP: "));
+        inputPanel.add(clientIPText);
+
         JButton serverButton = new JButton("Server");
+        selectionPanel.add(clientButton);
+        selectionPanel.add(serverButton);
 
         clientButton.setSize(100, 75);
         serverButton.setSize(100, 75);
 
-        frame.add(clientButton);
-        frame.add(serverButton);
+        frame.add(inputPanel, c);
+        c.gridy = 1;
+        frame.add(selectionPanel, c);
         frame.setVisible(true);
 
         clientButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sceneTwo(clientButton, serverButton);
+                sceneTwo();
                 frame.setTitle("Client");
 
                 client = new Client();
-                String inetAddress = "localhost";
+                String inetAddress = clientIPText.getText();
                 int port = 1234;
 
                 // Client tries to connect to the specified address and port
@@ -53,14 +70,13 @@ public class Runner {
         serverButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sceneTwo(clientButton, serverButton);
+                sceneTwo();
                 frame.setTitle("Server");
 
                 server = new Server();
                 int port = 1234;
 
                 // Creates the server at the specified port then looks for a connection
-                // creates server
                 try {
                     server.createServer(port);
                 } catch (Exception ex) {
@@ -102,6 +118,7 @@ public class Runner {
                             try {
                                 readThreadFunction(server.in);
                             } catch (InterruptedException ex) {
+                                // if the client disconnects, remove functionality and look for new client
                                 chatBox.addLine(server.clientSocket.getInetAddress() + " has disconnected.");
                                 chatBox.getOutField().removeKeyListener(chatBox.getOutField().getKeyListeners()[0]);
                                 serverWaitForClient(port);
@@ -109,6 +126,7 @@ public class Runner {
                         }
                     };
                     readThread.start();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -150,13 +168,13 @@ public class Runner {
                             try {
                                 readThreadFunction(client.in);
                             } catch (InterruptedException ex) {
+                                // if the server disconnects, remove functionality and look for server at same ip & port
                                 chatBox.addLine(client.clientSocket.getInetAddress() + " has disconnected.");
                                 chatBox.getOutField().removeKeyListener(chatBox.getOutField().getKeyListeners()[0]);
                                 clientSearchForServer(inetAddress, port, seconds);
                             }
                         }
                     };
-
                     readThread.start();
 
                 } catch (Exception ex) {
@@ -202,10 +220,10 @@ public class Runner {
     }
 
     // Transition from two button scene to the chatbox scene after selection (only gui elements)
-    public static void sceneTwo(JButton clientButton, JButton serverButton) {
+    public static void sceneTwo() {
         frame.setLayout(null);
-        frame.remove(clientButton);
-        frame.remove(serverButton);
+        frame.remove(inputPanel);
+        frame.remove(selectionPanel);
         chatBox = new ChatBoxPanel();
         frame.add(chatBox);
         frame.repaint();

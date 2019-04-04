@@ -12,7 +12,6 @@ public class ChatBoxPanel extends JPanel {
     public ChatBoxPanel() {
         Border textBoxBorder = new LineBorder(Color.black, 1);
 
-        setPreferredSize(new Dimension(550, 350));
         setSize(600, 400);
         setBorder(textBoxBorder);
 
