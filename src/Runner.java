@@ -20,7 +20,7 @@ public class Runner {
 
     public static void main(String[] args) {
         frame = new JFrame();
-        frame.setSize(610, 435);
+        frame.setSize(610, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
