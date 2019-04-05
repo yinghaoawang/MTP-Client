@@ -1,3 +1,4 @@
+import javax.imageio.ImageIO;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
@@ -7,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -243,6 +245,7 @@ public class Runner {
                     if (inputLine.equals("text")) {
                         String contentLine = in.readUTF();
                         chatBox.addLine(contentLine);
+                        chatBox.scrollLast();
                     } else if (inputLine.equals(".wav")) {
                         long bufferLen = in.readLong();
                         byte[] buffer = new byte[(int)bufferLen];
@@ -260,6 +263,17 @@ public class Runner {
                                 }
                             }
                         });
+                    } else if (inputLine.equals(".png")) {
+                        long bufferLen = in.readLong();
+                        byte[] buffer = new byte[(int)bufferLen];
+                        in.readFully(buffer, 0, (int)bufferLen);
+                        String contentLine = in.readUTF();
+                        chatBox.addLine(contentLine);
+                        File temp = File.createTempFile("tmp", inputLine);
+                        //temp.deleteOnExit();
+                        BufferedImage img = ImageIO.read(new ByteArrayInputStream(buffer));
+                        ImageIO.write(img, inputLine.substring(1), temp);
+                        chatBox.addImage(temp.getAbsolutePath(), 200, 200);
                     }
 
                     System.out.println(inputLine);

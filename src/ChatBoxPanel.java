@@ -1,11 +1,13 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 
 public class ChatBoxPanel extends JPanel {
-
-    private JTextArea messageField;
+    private JTextPane messageField;
     private JTextArea outField;
     private JScrollPane scrollPane;
     private JButton attachmentButton;
@@ -19,13 +21,16 @@ public class ChatBoxPanel extends JPanel {
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        messageField = new JTextArea();
-        messageField.setRows(10);
-        messageField.setColumns(6);
+        messageField = new JTextPane();
+        messageField.setContentType("text/html");
+        messageField.setEditorKit(new HTMLEditorKit());
+        messageField.setDocument(new HTMLDocument());
+        //messageField.setRows(10);
+        //messageField.setColumns(6);
         messageField.setSize(new Dimension(500, 300));
         messageField.setBorder(textBoxBorder);
         messageField.setEditable(false);
-        messageField.setLineWrap(true);
+        //messageField.setLineWrap(true);
 
         scrollPane = new JScrollPane(messageField);
         scrollPane.setPreferredSize(messageField.getSize());
@@ -77,7 +82,27 @@ public class ChatBoxPanel extends JPanel {
     public JButton getAttachmentButton() { return attachmentButton; }
 
     public void addLine(String msg) {
-        messageField.append(msg + "\n");
+        try {
+            HTMLDocument doc = (HTMLDocument)messageField.getDocument();
+            HTMLEditorKit kit = (HTMLEditorKit)messageField.getEditorKit();
+            doc.insertString(doc.getLength(), msg + "\n", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addImage(String imagePath, int width, int height) {
+        try {
+            String src = "file:" + imagePath;
+            System.out.println(src);
+
+            HTMLDocument doc = (HTMLDocument)messageField.getDocument();
+            HTMLEditorKit kit = (HTMLEditorKit)messageField.getEditorKit();
+
+            kit.insertHTML(doc, doc.getLength(), "<img src=\"" + src + "\" width=\"" + width + "\" height= \"" + height + "\" />", 0, 0, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

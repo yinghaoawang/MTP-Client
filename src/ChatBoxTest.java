@@ -8,5 +8,6 @@ public class ChatBoxTest {
         frame.setSize(800, 500);
         ChatBoxPanel chatBox = new ChatBoxPanel();
         frame.add(chatBox);
-        frame.setVisible(true);    }
+        frame.setVisible(true);
+    }
 }
