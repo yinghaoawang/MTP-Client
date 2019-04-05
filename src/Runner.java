@@ -4,10 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -125,16 +124,7 @@ public class Runner {
                     chatBox.getAttachmentButton().addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            JFileChooser fc = new JFileChooser("./");
-                            int fcReturn = fc.showOpenDialog(frame);
-                            if (fcReturn == JFileChooser.APPROVE_OPTION) {
-                                try {
-                                    File file = fc.getSelectedFile();
-                                    sendMessage("Server", file.getName(), server.out);
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-                                }
-                            }
+                            getAndSendMedia("Server", server.out);
                         }
                     });
 
@@ -188,6 +178,13 @@ public class Runner {
                         }
                     });
 
+                    chatBox.getAttachmentButton().addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            getAndSendMedia("Client", client.out);
+                        }
+                    });
+
                     // creates and runs thread that handles reading input from the socket
                     Thread readThread = new Thread() {
                         @Override
@@ -212,15 +209,46 @@ public class Runner {
 
     }
 
+    public static void getAndSendMedia(String username, DataOutputStream out) {
+        JFileChooser fc = new JFileChooser("./");
+        int fcReturn = fc.showOpenDialog(frame);
+        if (fcReturn == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = fc.getSelectedFile();
+                out.writeUTF("wav");
+                byte[] buffer = Files.readAllBytes(Paths.get(file.getPath()));
+                out.writeLong(buffer.length);
+                out.write(buffer, 0, buffer.length);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
     // The function that constantly checks any input has been sent to the socket (should be in a thread)
     public static void readThreadFunction(DataInputStream in) throws InterruptedException {
         while (true) {
-
             try {
                 String inputLine = in.readUTF();
                 if (inputLine != null) {
+                    if (inputLine.equals("text")) {
+                        String contentLine = in.readUTF();
+                        chatBox.addLine(contentLine);
+                    } else if (inputLine.equals("wav")) {
+                        long bufferLen = in.readLong();
+                        byte[] buffer = new byte[(int)bufferLen];
+                        in.readFully(buffer, 0, (int)bufferLen);
+
+                        String randomFilePath = Math.random() * 9999999 + ".wav";
+                        File file = new File(randomFilePath);
+                        OutputStream os = new FileOutputStream(file);
+                        os.write(buffer);
+                        os.close();
+                        SoundManager.playSound(file);
+                    }
+
                     System.out.println(inputLine);
-                    chatBox.addLine(inputLine);
+
                 }
             } catch (IOException e) {
                 throw new InterruptedException();
@@ -236,6 +264,7 @@ public class Runner {
             try {
                 String msg = chatBox.getOutField().getText();
                 if (msg.trim() == "") return;
+                out.writeUTF("text");
                 sendMessage(username, msg, out);
             } catch (Exception ex) {
                 ex.printStackTrace();
