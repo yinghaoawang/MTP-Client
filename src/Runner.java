@@ -32,16 +32,36 @@ public class Runner {
         GridBagConstraints c = new GridBagConstraints();
         frame.setTitle("MTP Client");
 
+        String clientIpString = "127.0.0.1";
+        String portString = "1234";
+        File f = new File(".conf.txt");
+        if (f.isFile() && f.canRead()) {
+            try {
+                FileInputStream fin = new FileInputStream(f);
+                BufferedReader br = new BufferedReader(new InputStreamReader(fin));
+                String line;
+                if ((line = br.readLine().trim()).length() > 0) {
+                    clientIpString = line;
+                }
+                if ((line = br.readLine().trim()).length() > 0) {
+                    portString = line;
+                }
+                br.close();
+                fin.close();
+            } catch (Exception e) {
+            }
+        }
+
         JPanel addressPanel = new JPanel();
         addressPanel.setLayout(new FlowLayout());
-        JTextField clientIPText = new JTextField("127.0.0.1");
+        JTextField clientIPText = new JTextField(clientIpString);
         clientIPText.setColumns(10);
         addressPanel.add(new JLabel("IP: "));
         addressPanel.add(clientIPText);
 
         JPanel portPanel = new JPanel();
         portPanel.setLayout(new FlowLayout());
-        JTextField portText = new JTextField("1234");
+        JTextField portText = new JTextField(portString);
         portText.setColumns(10);
         portPanel.add(new JLabel("Port: "));
         portPanel.add(portText);
@@ -77,6 +97,7 @@ public class Runner {
                 client = new Client();
                 String inetAddress = clientIPText.getText();
                 int port = Integer.parseInt(portText.getText());
+                writeNewConf(new String[] {inetAddress, port + ""});
 
                 // Client tries to connect to the specified address and port
                 clientSearchForServer(inetAddress, port, 3);
@@ -87,10 +108,12 @@ public class Runner {
             @Override
             public void actionPerformed(ActionEvent e) {
                 sceneTwo();
+
                 frame.setTitle("Server");
 
                 server = new Server();
                 int port = Integer.parseInt(portText.getText());
+                writeNewConf(new String[] {clientIPText.getText(), port + ""});
 
                 // Creates the server at the specified port then looks for a connection
                 try {
@@ -324,5 +347,18 @@ public class Runner {
         frame.add(chatBox);
         frame.repaint();
         frame.setVisible(true);
+    }
+
+    public static void writeNewConf(String[] lines) {
+        try {
+            FileWriter fw = new FileWriter(".conf.txt", false);
+            for (String line : lines) {
+                fw.write(line + "\n");
+            }
+            fw.flush();
+            fw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
