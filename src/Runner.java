@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -236,6 +237,10 @@ public class Runner {
         }
     }
 
+    public static final String[] imageFormats = new String[] {
+        ".jpeg", ".jpg", ".png", ".bmp", ".gif"
+    };
+
     // The function that constantly checks any input has been sent to the socket (should be in a thread)
     public static void readThreadFunction(DataInputStream in) throws InterruptedException {
         while (true) {
@@ -263,14 +268,14 @@ public class Runner {
                                 }
                             }
                         });
-                    } else if (inputLine.equals(".png")) {
+                    } else if (Arrays.asList(imageFormats).contains(inputLine)) {
                         long bufferLen = in.readLong();
                         byte[] buffer = new byte[(int)bufferLen];
                         in.readFully(buffer, 0, (int)bufferLen);
                         String contentLine = in.readUTF();
                         chatBox.addLine(contentLine);
                         File temp = File.createTempFile("tmp", inputLine);
-                        //temp.deleteOnExit();
+                        temp.deleteOnExit();
                         BufferedImage img = ImageIO.read(new ByteArrayInputStream(buffer));
                         ImageIO.write(img, inputLine.substring(1), temp);
                         chatBox.addImage(temp.getAbsolutePath(), 200, 200);
