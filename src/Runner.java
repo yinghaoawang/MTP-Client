@@ -274,6 +274,7 @@ public class Runner {
                         String contentLine = in.readUTF();
                         chatBox.addLine(contentLine);
                         chatBox.scrollLast();
+                        SoundManager.playSound("res/msg.wav");
                     } else if (inputLine.equals(".wav")) {
                         long bufferLen = in.readLong();
                         byte[] buffer = new byte[(int)bufferLen];
@@ -302,6 +303,7 @@ public class Runner {
                         BufferedImage img = ImageIO.read(new ByteArrayInputStream(buffer));
                         ImageIO.write(img, inputLine.substring(1), temp);
                         chatBox.addImage(temp.getAbsolutePath(), 200, 200);
+                        SoundManager.playSound("res/msg.wav");
                     }
 
                     System.out.println(inputLine);
@@ -335,6 +337,7 @@ public class Runner {
         chatBox.addLine(msg);
         chatBox.getOutField().setText("");
         chatBox.scrollLast();
+        SoundManager.playSound("res/msg.wav");
     }
 
     // Transition from two button scene to the chatbox scene after selection (only gui elements)
@@ -349,6 +352,7 @@ public class Runner {
         frame.setVisible(true);
     }
 
+    // creates a new config file that keeps track of data
     public static void writeNewConf(String[] lines) {
         try {
             FileWriter fw = new FileWriter(".conf.txt", false);
