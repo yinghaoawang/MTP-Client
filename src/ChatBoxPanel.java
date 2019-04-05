@@ -65,6 +65,11 @@ public class ChatBoxPanel extends JPanel {
         add(outFieldPanel, c);
     }
 
+    public void scrollLast() {
+        JScrollBar vertical = scrollPane.getVerticalScrollBar();
+        vertical.setValue(vertical.getMaximum());
+    }
+
     public JTextArea getOutField() {
         return outField;
     }

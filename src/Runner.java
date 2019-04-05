@@ -1,3 +1,5 @@
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -138,6 +140,7 @@ public class Runner {
                                 // if the client disconnects, remove functionality and look for new client
                                 chatBox.addLine(server.clientSocket.getInetAddress() + " has disconnected.");
                                 chatBox.getOutField().removeKeyListener(chatBox.getOutField().getKeyListeners()[0]);
+                                chatBox.getAttachmentButton().removeActionListener(chatBox.getAttachmentButton().getActionListeners()[0]);
                                 serverWaitForClient(port);
                             }
                         }
@@ -195,6 +198,7 @@ public class Runner {
                                 // if the server disconnects, remove functionality and look for server at same ip & port
                                 chatBox.addLine(client.clientSocket.getInetAddress() + " has disconnected.");
                                 chatBox.getOutField().removeKeyListener(chatBox.getOutField().getKeyListeners()[0]);
+                                chatBox.getAttachmentButton().removeActionListener(chatBox.getAttachmentButton().getActionListeners()[0]);
                                 clientSearchForServer(inetAddress, port, seconds);
                             }
                         }
@@ -239,7 +243,7 @@ public class Runner {
                         byte[] buffer = new byte[(int)bufferLen];
                         in.readFully(buffer, 0, (int)bufferLen);
 
-                        String randomFilePath = Math.random() * 9999999 + ".wav";
+                        String randomFilePath = "tmp" + (long)(Math.random() * 9999999) + ".wav";
                         File file = new File(randomFilePath);
                         OutputStream os = new FileOutputStream(file);
                         os.write(buffer);
@@ -277,6 +281,7 @@ public class Runner {
         out.writeUTF(msg);
         chatBox.addLine(msg);
         chatBox.getOutField().setText("");
+        chatBox.scrollLast();
     }
 
     // Transition from two button scene to the chatbox scene after selection (only gui elements)

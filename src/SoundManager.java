@@ -5,6 +5,8 @@ import javax.sound.sampled.FloatControl;
 import java.io.File;
 
 public class SoundManager {
+    public static Clip currClip;
+
     public static void playSound(String fileName) {
         File file = new File(fileName);
         playSound(file);
@@ -16,7 +18,8 @@ public class SoundManager {
             Clip clip = AudioSystem.getClip();
             clip.open(audioIn);
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(-30f);
+            gainControl.setValue(-20f);
+            currClip = clip;
             clip.start();
         } catch (Exception e) {
             System.out.println(e);
