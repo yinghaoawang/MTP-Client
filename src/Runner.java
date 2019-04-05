@@ -1,3 +1,4 @@
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 import javax.swing.*;
@@ -242,13 +243,26 @@ public class Runner {
                         long bufferLen = in.readLong();
                         byte[] buffer = new byte[(int)bufferLen];
                         in.readFully(buffer, 0, (int)bufferLen);
+                        /*
 
-                        String randomFilePath = "tmp" + (long)(Math.random() * 9999999) + ".wav";
+                        String randomFilePath = "tmp" + (long)(Math.random() * 99999999999999L) + ".wav";
                         File file = new File(randomFilePath);
                         OutputStream os = new FileOutputStream(file);
                         os.write(buffer);
                         os.close();
                         SoundManager.playSound(file);
+                        */
+
+                        SoundManager.playSound(buffer);
+                        Clip clip = SoundManager.currClip;
+                        clip.addLineListener(new LineListener() {
+                            @Override
+                            public void update(LineEvent event) {
+                                if (event.getType() == LineEvent.Type.STOP) {
+                                    clip.close();
+                                }
+                            }
+                        });
                     }
 
                     System.out.println(inputLine);
