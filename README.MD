@@ -5,4 +5,3 @@ send messages, sounds, or pictures to each other.
 ### Features
   * Sending text
   * Sending .wav files, and support image files (.bmp, .jpg, .jpeg, .gif, .png)
-  *
