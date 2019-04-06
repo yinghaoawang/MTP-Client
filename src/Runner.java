@@ -250,7 +250,7 @@ public class Runner {
 
                 String extension = file.getName().substring(fileName.lastIndexOf('.'));
                 if (Arrays.asList(imageFormats).contains(extension)) {
-                    chatBox.addImage(file.getAbsolutePath(), 200, 200);
+                    // PRETTY BAD CODE HUH
                 } else if (extension.equals(".wav")) {
                 } else {
                     chatBox.addLine("Unsupported file extension: " + extension);
@@ -263,7 +263,9 @@ public class Runner {
                 String sendMessage = username + " sent " + fileName;
                 chatBox.addLine(sendMessage);
                 out.writeUTF(sendMessage);
-
+                if (Arrays.asList(imageFormats).contains(extension)) {
+                    chatBox.addImage(file.getAbsolutePath(), 200, 200);
+                }
                 SoundManager.playSound("res/msg.wav");
             } catch (Exception ex) {
                 ex.printStackTrace();
