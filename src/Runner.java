@@ -253,7 +253,13 @@ public class Runner {
                 byte[] buffer = Files.readAllBytes(Paths.get(file.getPath()));
                 out.writeLong(buffer.length);
                 out.write(buffer, 0, buffer.length);
-                out.writeUTF(username + " sent " + fileName);
+                String sendMessage = username + " sent " + fileName;
+                chatBox.addLine(sendMessage);
+                out.writeUTF(sendMessage);
+                if (Arrays.asList(imageFormats).contains(extension)) {
+                    chatBox.addImage(file.getAbsolutePath(), 200, 200);
+                }
+                SoundManager.playSound("res/msg.wav");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
