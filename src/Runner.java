@@ -97,7 +97,7 @@ public class Runner {
                 client = new Client();
                 String inetAddress = clientIPText.getText();
                 int port = Integer.parseInt(portText.getText());
-                writeNewConf(new String[] {inetAddress, port + ""});
+                writeNewConf(new String[] {inetAddress, portText.getText()});
 
                 // Client tries to connect to the specified address and port
                 clientSearchForServer(inetAddress, port, 3);

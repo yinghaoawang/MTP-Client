@@ -9,7 +9,7 @@ public class Server {
     DataInputStream in;
 
     public void createServer(int port) throws IOException {
-        serverSocket = new ServerSocket(1234);
+        serverSocket = new ServerSocket(port);
     }
 
     public void awaitConnection() throws IOException {
