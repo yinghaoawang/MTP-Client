@@ -3,7 +3,7 @@ package mtp.view;
 import javax.swing.*;
 import java.awt.*;
 
-public class MTPGUI {
+public class MTPView {
     private static ChatBoxPanel chatBox;
     private static JFrame frame;
     private JPanel addressPanel;
@@ -25,7 +25,7 @@ public class MTPGUI {
     private JButton clientButton;
     private JButton serverButton;
 
-    public MTPGUI() {
+    public MTPView() {
         frame = new JFrame();
         frame.setSize(610, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

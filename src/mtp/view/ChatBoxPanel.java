@@ -20,8 +20,6 @@ public class ChatBoxPanel extends JPanel {
         setBorder(textBoxBorder);
 
         setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-
         messageField = new JTextPane();
         messageField.setContentType("text/html");
         messageField.setEditorKit(new HTMLEditorKit());
@@ -50,20 +48,18 @@ public class ChatBoxPanel extends JPanel {
         JPanel outFieldPanel = new JPanel();
         outFieldPanel.setLayout(new GridBagLayout());
         GridBagConstraints ofc = new GridBagConstraints();
-
         ofc.anchor = GridBagConstraints.WEST;
         outFieldPanel.add(attachmentButton, ofc);
         ofc.gridy = 1;
         ofc.insets = new Insets(3, 0, 0, 0);
         outFieldPanel.add(outField, ofc);
 
+        GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(10, 10, 10, 10);
         c.anchor = GridBagConstraints.NORTH;
-
         c.gridx = 1;
         c.gridy = 0;
         add(scrollPane, c);
-
         c.gridx = 1;
         c.gridy = 1;
         add(outFieldPanel, c);

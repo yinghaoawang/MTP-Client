@@ -2,9 +2,8 @@ package mtp.controller;
 
 import mtp.SoundManager;
 import mtp.model.*;
-import mtp.view.MTPGUI;
+import mtp.view.MTPView;
 
-import javax.imageio.ImageIO;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
@@ -13,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -23,14 +21,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MTPController {
-    private MTPGUI view;
+    private MTPView view;
     private MTPModel model;
 
     public final String[] supportedImageFormats = new String[] {
             ".jpeg", ".jpg", ".png", ".bmp", ".gif"
     };
 
-    public MTPController(MTPGUI view, MTPModel model) {
+    public MTPController(MTPView view, MTPModel model) {
         this.view = view;
         this.model = model;
     }
