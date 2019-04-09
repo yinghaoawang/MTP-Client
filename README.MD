@@ -1,8 +1,7 @@
 # MTP Client
 ![](res/readme_pic.png)
 ### Description
-#### A messenger application that allows a person to host a server or connect to a server and
-send messages, sounds, or pictures to each other.
+A messenger application that allows a person to host a server or connect to a server and send messages, sounds, or pictures to each other.
 ### Features
   * Sending text
   * Sending attachments that will be played/displayed: audio (.wav), images (.bmp, .jpg, .jpeg, .gif, .png)
