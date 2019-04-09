@@ -248,42 +248,37 @@ public class MTPController {
                 if (inputLine != null) {
                     if (inputLine.equals("text")) {
                         String contentLine = in.readUTF();
-                        view.getChatBox().addLine(contentLine);
-                        view.getChatBox().scrollLast();
-                        SoundManager.playSound("res/msg.wav");
-                    } else if (inputLine.equals(".wav")) {
+                        addLineToChatBox(contentLine);
+                    } else {
                         long bufferLen = in.readLong();
-                        byte[] buffer = new byte[(int)bufferLen];
-                        in.readFully(buffer, 0, (int)bufferLen);
+                        byte[] buffer = new byte[(int) bufferLen];
+                        in.readFully(buffer, 0, (int) bufferLen);
                         String contentLine = in.readUTF();
-                        view.getChatBox().addLine(contentLine);
-
-                        SoundManager.playSound(buffer);
-                        Clip clip = SoundManager.currClip;
-                        clip.addLineListener(new LineListener() {
-                            @Override
-                            public void update(LineEvent event) {
-                                if (event.getType() == LineEvent.Type.STOP) {
-                                    clip.close();
-                                }
-                            }
-                        });
-                    } else if (Arrays.asList(supportedImageFormats).contains(inputLine)) {
-                        long bufferLen = in.readLong();
-                        byte[] buffer = new byte[(int)bufferLen];
-                        in.readFully(buffer, 0, (int)bufferLen);
-                        String contentLine = in.readUTF();
-                        view.getChatBox().addLine(contentLine);
                         File temp = File.createTempFile("tmp", inputLine);
                         temp.deleteOnExit();
-                        BufferedImage img = ImageIO.read(new ByteArrayInputStream(buffer));
-                        ImageIO.write(img, inputLine.substring(1), temp);
-                        view.getChatBox().addImage(temp.getAbsolutePath(), 200, 200);
-                        SoundManager.playSound("res/msg.wav");
+                        FileOutputStream os = new FileOutputStream(temp);
+                        os.write(buffer);
+                        os.flush();
+                        os.close();
+
+                        if (inputLine.equals(".wav")) {
+                            SoundManager.playSound(temp.getAbsolutePath());
+                            Clip clip = SoundManager.currClip;
+                            clip.addLineListener(new LineListener() {
+                                @Override
+                                public void update(LineEvent event) {
+                                    if (event.getType() == LineEvent.Type.STOP) {
+                                        clip.close();
+                                    }
+                                }
+                            });
+                        } else if (Arrays.asList(supportedImageFormats).contains(inputLine)) {
+                            view.getChatBox().addImage(temp.getAbsolutePath(), 200, 200);
+                        }
+
+                        addLineToChatBox(contentLine);
+
                     }
-
-                    //System.out.println(inputLine);
-
                 }
             } catch (IOException e) {
                 throw new InterruptedException();
@@ -307,13 +302,18 @@ public class MTPController {
         }
     }
 
+    public void addLineToChatBox(String msg) {
+        view.getChatBox().addLine(msg);
+        view.getChatBox().scrollLast();
+        SoundManager.playSound("res/msg.wav");
+    }
+
     public void sendMessage(String username, String msg, DataOutputStream out) throws IOException {
         msg = username + ": " + msg;
         out.writeUTF(msg);
-        view.getChatBox().addLine(msg);
+
+        addLineToChatBox(msg);
         view.getChatBox().getOutField().setText("");
-        view.getChatBox().scrollLast();
-        SoundManager.playSound("res/msg.wav");
     }
 
     private void updateViewWithConf(String configPath) {
