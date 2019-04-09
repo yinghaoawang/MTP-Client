@@ -46,48 +46,56 @@ public class MTPController {
         view.getClientButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                view.loadChatBoxScene();
-                view.getFrame().setTitle("Client");
-
-                String clientIPText = view.getClientIPTextField().getText();
-                String portText = view.getPortTextField().getText();
-
-                model.setClientIP(clientIPText);
-                model.setPort(Integer.parseInt(portText));
-                model.createClient();
-
-                writeNewConf(new String[] { clientIPText, portText }, ".conf.txt");
-
-                // Client tries to connect to the specified address and port
-                clientSearchForServer(3);
+                initClient();
             }
         });
 
         view.getServerButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                view.loadChatBoxScene();
-                view.getFrame().setTitle("Server");
-
-                String clientIPText = view.getClientIPTextField().getText();
-                String portText = view.getPortTextField().getText();
-
-                model.setClientIP(clientIPText);
-                model.setPort(Integer.parseInt(portText));
-
-                // Creates the server at the specified port then looks for a connection
-                try {
-                    model.createServer();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    System.exit(1);
-                }
-
-                writeNewConf(new String[] { clientIPText, portText }, ".conf.txt");
-
-                serverWaitForClient();
+                initServer();
             }
         });
+    }
+
+    public void initClient() {
+        view.loadChatBoxScene();
+        view.getFrame().setTitle("Client");
+
+        String clientIPText = view.getClientIPTextField().getText();
+        String portText = view.getPortTextField().getText();
+
+        model.setClientIP(clientIPText);
+        model.setPort(Integer.parseInt(portText));
+        model.createClient();
+
+        writeNewConf(new String[] { clientIPText, portText }, ".conf.txt");
+
+        // Client tries to connect to the specified address and port
+        clientSearchForServer(3);
+    }
+
+    public void initServer() {
+        view.loadChatBoxScene();
+        view.getFrame().setTitle("Server");
+
+        String clientIPText = view.getClientIPTextField().getText();
+        String portText = view.getPortTextField().getText();
+
+        model.setClientIP(clientIPText);
+        model.setPort(Integer.parseInt(portText));
+
+        // Creates the server at the specified port then looks for a connection
+        try {
+            model.createServer();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
+
+        writeNewConf(new String[] { clientIPText, portText }, ".conf.txt");
+
+        serverWaitForClient();
     }
 
     // Server waits for a client connection, if found then functionality added to the chatbox

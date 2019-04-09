@@ -17,4 +17,8 @@ public class MTPClient {
     public void init() {
         controller.init();
     }
+
+    public void forceInitServer() {
+        controller.initServer();
+    }
 }
