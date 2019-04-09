@@ -8,3 +8,8 @@ A messenger application that allows a person to host a server or connect to a se
   * Clean codebase (for the most part) using the MVC pattern
   * Built with TCP sockets
   * GUI built using only Java's Swing and AWT libraries
+
+### Instructions
+  1. Build and run the .jar
+  2. Host a server and wait for connection (need to port forward) or connect to a server
+  3. Enjoy a friendly chat!
