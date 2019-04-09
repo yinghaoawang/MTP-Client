@@ -3,14 +3,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    ServerSocket serverSocket;
-    Socket clientSocket;
+    private ServerSocket serverSocket;
+
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
+
+    private Socket clientSocket;
     DataOutputStream out;
     DataInputStream in;
-
-    public void createServer(int port) throws IOException {
-        serverSocket = new ServerSocket(port);
-    }
 
     public void awaitConnection() throws IOException {
         if (serverSocket != null) {
@@ -28,7 +29,8 @@ public class Server {
         out.writeUTF(msg);
     }
 
-    public Server() {
+    public Server(int port) throws IOException {
+        serverSocket = new ServerSocket(port);
     }
 
 }

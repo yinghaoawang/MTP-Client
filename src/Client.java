@@ -3,10 +3,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class Client {
-    public Socket clientSocket;
+    private Socket clientSocket;
     public DataOutputStream out;
     public DataInputStream in;
-    public String user = "Client";
     public void startConnection(String ip, int port) throws IOException {
         clientSocket = new Socket();
         clientSocket.connect(new InetSocketAddress(ip, port), 5000);
