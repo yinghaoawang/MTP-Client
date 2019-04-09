@@ -259,6 +259,8 @@ public class MTPController {
                         os.flush();
                         os.close();
 
+                        addLineToChatBox(contentLine);
+
                         if (inputLine.equals(".wav")) {
                             SoundManager.playSound(temp.getAbsolutePath());
                             Clip clip = SoundManager.currClip;
@@ -273,8 +275,6 @@ public class MTPController {
                         } else if (Arrays.asList(supportedImageFormats).contains(inputLine)) {
                             view.getChatBox().addImage(temp.getAbsolutePath(), 200, 200);
                         }
-
-                        addLineToChatBox(contentLine);
 
                     }
                 }
