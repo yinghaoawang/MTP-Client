@@ -1,3 +1,9 @@
+package mtp.controller;
+
+import mtp.SoundManager;
+import mtp.model.*;
+import mtp.view.MTPGUI;
+
 import javax.imageio.ImageIO;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
@@ -106,14 +112,14 @@ public class MTPController {
                         @Override
                         public void keyPressed(KeyEvent e) {
                             super.keyPressed(e);
-                            keyPressedFunction(e, server.out, "Server");
+                            keyPressedFunction(e, server.getOutputStream(), "Server");
                         }
                     });
 
                     view.getChatBox().getAttachmentButton().addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            getAndSendMedia("Server", server.out);
+                            getAndSendMedia("Server", server.getOutputStream());
                         }
                     });
 
@@ -122,7 +128,7 @@ public class MTPController {
                         @Override
                         public void run() {
                             try {
-                                readThreadFunction(server.in);
+                                readThreadFunction(server.getInputStream());
                             } catch (InterruptedException ex) {
                                 // if the client disconnects, remove functionality and look for new client
                                 view.getChatBox().addLine(server.getClientSocket().getInetAddress() + " has disconnected.");
@@ -165,14 +171,14 @@ public class MTPController {
                         @Override
                         public void keyPressed(KeyEvent e) {
                             super.keyPressed(e);
-                            keyPressedFunction(e, client.out, "Client");
+                            keyPressedFunction(e, client.getOutputStream(), "Client");
                         }
                     });
 
                     view.getChatBox().getAttachmentButton().addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            getAndSendMedia("Client", client.out);
+                            getAndSendMedia("Client", client.getOutputStream());
                         }
                     });
 
@@ -181,7 +187,7 @@ public class MTPController {
                         @Override
                         public void run() {
                             try {
-                                readThreadFunction(client.in);
+                                readThreadFunction(client.getInputStream());
                             } catch (InterruptedException ex) {
                                 // if the server disconnects, remove functionality and look for server at same ip & port
                                 view.getChatBox().addLine(model.getClientIP() + " has disconnected.");
@@ -276,7 +282,7 @@ public class MTPController {
                         SoundManager.playSound("res/msg.wav");
                     }
 
-                    System.out.println(inputLine);
+                    //System.out.println(inputLine);
 
                 }
             } catch (IOException e) {

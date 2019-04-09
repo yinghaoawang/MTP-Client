@@ -1,3 +1,5 @@
+package mtp.model;
+
 import java.io.*;
 
 public class MTPModel {

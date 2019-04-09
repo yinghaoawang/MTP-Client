@@ -1,3 +1,7 @@
+import mtp.controller.MTPController;
+import mtp.view.MTPGUI;
+import mtp.model.MTPModel;
+
 public class Runner {
     public static void main(String[] args) {
         MTPGUI view = new MTPGUI();

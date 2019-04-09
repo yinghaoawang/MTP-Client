@@ -1,5 +1,6 @@
+import mtp.view.ChatBoxPanel;
+
 import javax.swing.*;
-import java.awt.*;
 
 public class ChatBoxTest {
     public static void main(String[] args) {

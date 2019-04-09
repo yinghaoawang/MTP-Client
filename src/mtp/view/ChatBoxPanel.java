@@ -1,7 +1,8 @@
+package mtp.view;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-import javax.swing.text.Document;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;

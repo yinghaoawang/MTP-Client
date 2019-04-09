@@ -1,9 +1,20 @@
+package mtp.model;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class Client {
     private Socket clientSocket;
+
+    public DataOutputStream getOutputStream() {
+        return out;
+    }
+
+    public DataInputStream getInputStream() {
+        return in;
+    }
+
     public DataOutputStream out;
     public DataInputStream in;
     public void startConnection(String ip, int port) throws IOException {

@@ -1,4 +1,4 @@
-# MTP Client
+# mtp mtp.model.Client
 ### Description
 #### A messenger application that allows a person to host a server or connect to a server and
 send messages, sounds, or pictures to each other.

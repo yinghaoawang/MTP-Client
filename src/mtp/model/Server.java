@@ -1,3 +1,5 @@
+package mtp.model;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,6 +12,15 @@ public class Server {
     }
 
     private Socket clientSocket;
+
+    public DataOutputStream getOutputStream() {
+        return out;
+    }
+
+    public DataInputStream getInputStream() {
+        return in;
+    }
+
     DataOutputStream out;
     DataInputStream in;
 
