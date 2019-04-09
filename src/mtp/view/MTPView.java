@@ -26,13 +26,15 @@ public class MTPView {
     private JButton serverButton;
 
     public MTPView() {
+
+    }
+
+    public void init() {
         frame = new JFrame();
         frame.setSize(610, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new GridBagLayout());
         frame.setTitle("Client");
-
-
 
         addressPanel = new JPanel();
         addressPanel.setLayout(new FlowLayout());

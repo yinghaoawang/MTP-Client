@@ -34,6 +34,7 @@ public class MTPController {
     }
 
     public void init() {
+        view.init();
         view.getClientIPTextField().setText(model.getClientIP());
         view.getPortTextField().setText(model.getPort() + "");
 
