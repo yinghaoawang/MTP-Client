@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MTP Client:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MTP_Client_jar</output-path>
+    <root id="archive" name="MTP Client.jar">
+      <element id="module-output" name="MTP Client" />
+    </root>
+  </artifact>
+</component>
