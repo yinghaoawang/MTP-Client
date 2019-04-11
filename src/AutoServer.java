@@ -3,7 +3,6 @@ import mtp.MTPClient;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 
 public class AutoServer {
     public static void main(String[] args) {
@@ -15,9 +14,11 @@ public class AutoServer {
                 JFrame frame = mtpClient.getFrame();
                 frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                 SystemTray tray = SystemTray.getSystemTray();
-                Image image = Toolkit.getDefaultToolkit().getImage("/res/tray.png");
-                PopupMenu popup = new PopupMenu("hey");
+                Image image = Toolkit.getDefaultToolkit().getImage("res/tray.png");
+                frame.setIconImage(image);
+                PopupMenu popup = new PopupMenu();
                 TrayIcon trayIcon = new TrayIcon(image, "MTP Client", popup);
+                trayIcon.setImageAutoSize(true);
                 trayIcon.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -47,8 +48,11 @@ public class AutoServer {
                     @Override
                     public void windowClosing(WindowEvent e) {
                         super.windowClosing(e);
-                        if (frame.getDefaultCloseOperation() != JFrame.DO_NOTHING_ON_CLOSE) return;
-                        minimizeFrame(frame, tray, trayIcon);
+                        if (frame.getDefaultCloseOperation() == JFrame.DO_NOTHING_ON_CLOSE) {
+                            minimizeFrame(frame, tray, trayIcon);
+                        } else if (frame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
+                            tray.remove(trayIcon);
+                        }
                     }
                 });
             } catch (Exception e) {

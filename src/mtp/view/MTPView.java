@@ -35,6 +35,7 @@ public class MTPView {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new GridBagLayout());
         frame.setTitle("Client");
+        frame.setResizable(false);
 
         addressPanel = new JPanel();
         addressPanel.setLayout(new FlowLayout());
