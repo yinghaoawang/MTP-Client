@@ -23,6 +23,15 @@ import java.util.concurrent.TimeUnit;
 public class MTPController {
     private MTPView view;
     private MTPModel model;
+    public String getLastFCDirectory() {
+        return lastFCDirectory;
+    }
+
+    public void setLastFCDirectory(String lastFCDirectory) {
+        this.lastFCDirectory = lastFCDirectory;
+    }
+
+    private String lastFCDirectory;
 
     public final String[] supportedImageFormats = new String[] {
             ".jpeg", ".jpg", ".png", ".bmp", ".gif"
@@ -39,6 +48,9 @@ public class MTPController {
         view.getPortTextField().setText(model.getPort() + "");
 
         updateViewWithConf(".conf.txt");
+        if (lastFCDirectory == null) {
+            setLastFCDirectory("./");
+        }
         addListeners();
     }
 
@@ -69,10 +81,14 @@ public class MTPController {
         model.setPort(Integer.parseInt(portText));
         model.createClient();
 
-        writeNewConf(new String[] { clientIPText, portText }, ".conf.txt");
+        updateConf();
 
         // Client tries to connect to the specified address and port
         clientSearchForServer(3);
+    }
+
+    private void updateConf() {
+        writeNewConf(new String[] { model.getClientIP(), model.getPort() + "", lastFCDirectory }, ".conf.txt");
     }
 
     public void initServer() {
@@ -215,11 +231,15 @@ public class MTPController {
     }
 
     public void getAndSendMedia(String username, DataOutputStream out) {
-        JFileChooser fc = new JFileChooser("./");
+        System.out.println(lastFCDirectory);
+        JFileChooser fc = new JFileChooser(lastFCDirectory);
         int fcReturn = fc.showOpenDialog(view.getFrame());
         if (fcReturn == JFileChooser.APPROVE_OPTION) {
             try {
                 File file = fc.getSelectedFile();
+                setLastFCDirectory(file.getParent());
+                updateConf();
+
                 String fileName = file.getName();
 
                 String extension = file.getName().substring(fileName.lastIndexOf('.'));
@@ -332,11 +352,14 @@ public class MTPController {
                 fin = new FileInputStream(f);
                 br = new BufferedReader(new InputStreamReader(fin));
                 String line;
-                if ((line = br.readLine().trim()).length() > 0) {
+                if (((line = br.readLine()) != null) && line.trim().length() > 0) {
                     view.getClientIPTextField().setText(line);
                 }
-                if ((line = br.readLine().trim()).length() > 0) {
+                if (((line = br.readLine()) != null) && line.trim().length() > 0) {
                     view.getPortTextField().setText(line);
+                }
+                if (((line = br.readLine()) != null) && line.trim().length() > 0) {
+                    setLastFCDirectory(line);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

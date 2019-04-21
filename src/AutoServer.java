@@ -4,6 +4,8 @@ public class AutoServer {
     public static void main(String[] args) {
         MTPClient mtpClient = new MTPClient();
         mtpClient.init();
-        new TrayMaker(mtpClient.getFrame());
+        mtpClient.forceInitServer();
+        TrayMaker trayMaker = new TrayMaker(mtpClient.getFrame());
+        trayMaker.minimizeFrame();
     }
 }
