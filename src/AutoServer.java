@@ -1,84 +1,9 @@
 import mtp.MTPClient;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
 public class AutoServer {
     public static void main(String[] args) {
         MTPClient mtpClient = new MTPClient();
         mtpClient.init();
-
-        if (SystemTray.isSupported()) {
-            try {
-                JFrame frame = mtpClient.getFrame();
-                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                SystemTray tray = SystemTray.getSystemTray();
-                Image image = Toolkit.getDefaultToolkit().getImage("res/tray.png");
-                frame.setIconImage(image);
-                PopupMenu popup = new PopupMenu();
-                TrayIcon trayIcon = new TrayIcon(image, "MTP Client", popup);
-                trayIcon.setImageAutoSize(true);
-                trayIcon.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        restoreFrame(frame, tray, trayIcon);
-                    }
-                });
-
-                MenuItem popupClose = new MenuItem("Close");
-                popupClose.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                        frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-                    }
-                });
-                MenuItem popupRestore = new MenuItem("Restore");
-                popupRestore.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        restoreFrame(frame, tray, trayIcon);
-                    }
-                });
-                popup.add(popupRestore);
-                popup.add(popupClose);
-
-                frame.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent e) {
-                        super.windowClosing(e);
-                        if (frame.getDefaultCloseOperation() == JFrame.DO_NOTHING_ON_CLOSE) {
-                            minimizeFrame(frame, tray, trayIcon);
-                        } else if (frame.getDefaultCloseOperation() == JFrame.EXIT_ON_CLOSE) {
-                            tray.remove(trayIcon);
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        mtpClient.forceInitServer();
+        new TrayMaker(mtpClient.getFrame());
     }
-
-    public static void restoreFrame(JFrame frame, SystemTray tray, TrayIcon trayIcon) {
-        frame.setVisible(true);
-        try {
-            tray.remove(trayIcon);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void minimizeFrame(JFrame frame, SystemTray tray, TrayIcon trayIcon) {
-        try {
-            tray.add(trayIcon);
-            frame.setVisible(false);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
 }
