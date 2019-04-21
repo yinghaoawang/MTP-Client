@@ -41,8 +41,7 @@ public class SoundManager {
             currClip.open(audioIn);
             audioIn.close();
 
-            FloatControl gainControl = (FloatControl) currClip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(-20f);
+
             currClip.start();
         } catch (Exception e) {
             System.out.println(e);
